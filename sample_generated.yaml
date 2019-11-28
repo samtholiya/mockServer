@@ -14,8 +14,9 @@ post:
         data: ""
     response:
       header: {}
-      data: ""
-      type: ""
+      payload:
+        type: ""
+        data: ""
       statuscode: 0
 get:
   description: ""

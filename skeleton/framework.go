@@ -25,8 +25,7 @@ type Request struct {
 
 type Response struct {
 	Header     map[string]string
-	Data       string
-	Type       string
+	Payload    Payload
 	StatusCode int
 }
 
