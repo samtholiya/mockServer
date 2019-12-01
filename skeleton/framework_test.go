@@ -29,7 +29,11 @@ func TestYamlSchema(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		file.WriteString(string(dataFound))
+		_, err = file.WriteString(string(dataFound))
+		if err != nil {
+			t.Error(err)
+			return
+		}
 		file.Close()
 	}
 	dataActual, err := ioutil.ReadFile(common.GetEnv("SAMPLE_YAML", "../sample_generated.yaml"))

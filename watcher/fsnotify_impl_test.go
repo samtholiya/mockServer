@@ -13,7 +13,11 @@ func TestFsnotifyWrapper(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	watcher.Add("./")
+	err = watcher.Add("./")
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	file, err := os.Create("./sample_generated.yaml")
 	if err != nil {
 		t.Error(err)
