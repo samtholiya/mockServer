@@ -1,17 +1,19 @@
 package skeleton
 
-//App: struct for getting all api
+//App struct for getting all api
 type App struct {
-	Post Api
-	Get  Api
+	Post API
+	Get  API
 }
 
-type Api struct {
+//API struct for getting different api scenarios
+type API struct {
 	Description string
 	Endpoint    string
 	Scenarios   []Scenario
 }
 
+//Scenario
 type Scenario struct {
 	Request  Request
 	Response Response
@@ -33,3 +35,4 @@ type Payload struct {
 	Type string
 	Data string
 }
+

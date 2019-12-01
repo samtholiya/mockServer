@@ -1,0 +1,29 @@
+language: go
+
+# Force-enable Go modules. Also force go to use the code in vendor/
+# These will both be unnecessary when Go 1.14 lands.
+env: GO111MODULE=on
+
+# You don't need to test on very old versions of the Go compiler. It's the user's
+# responsibility to keep their compiler up to date.
+go:
+  - 1.13.x
+git:
+  depth: 1
+
+install: true
+
+jobs:
+  include:
+    - stage: test
+      before_script:
+        - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.21.0
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
+      script:
+        - go test -v -race -coverprofile c.out ./...
+        - golangci-lint run
+      after_script:
+        - ./cc-test-reporter -d after-build -p go-open-registry --exit-code $TRAVIS_TEST_RESULT
+        - bash <(curl -s https://codecov.io/bash)
