@@ -1,13 +1,15 @@
 package watcher
 
 import (
-	"fmt"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/samtholiya/apiMocker/common"
 )
 
 func TestFsnotifyWrapper(t *testing.T) {
+	log := common.GetLogger()
 	watcher, err := NewFsWatcher()
 	if err != nil {
 		t.Error(err)
@@ -26,7 +28,7 @@ func TestFsnotifyWrapper(t *testing.T) {
 	file.Close()
 	select {
 	case wevent := <-watcher.GetEventChan():
-		fmt.Println(wevent.Name)
+		log.Info(wevent)
 	case err := <-watcher.GetErrorChan():
 		t.Error(err)
 	case <-time.After(1 * time.Second):
@@ -35,7 +37,7 @@ func TestFsnotifyWrapper(t *testing.T) {
 	os.Remove("./sample_generated.yaml")
 	select {
 	case wevent := <-watcher.GetEventChan():
-		fmt.Println(wevent.Name)
+		log.Info(wevent)
 	case err := <-watcher.GetErrorChan():
 		t.Error(err)
 	case <-time.After(1 * time.Second):
