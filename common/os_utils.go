@@ -1,14 +1,14 @@
 package common
 
 import (
-	"fmt"
 	"os"
 )
 
+//GetEnv returns the environment value if available else fallback string
 func GetEnv(key, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
-		fmt.Printf("%v not found %v value used", key, fallback)
+		log.Infof("%v not found %v value used", key, fallback)
 		return fallback
 	}
 	return value
