@@ -35,4 +35,3 @@ type Payload struct {
 	Type string
 	Data string
 }
-
