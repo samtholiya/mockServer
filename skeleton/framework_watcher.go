@@ -16,12 +16,12 @@ func init() {
 }
 
 //GetApp Returns currently loaded App object
-func GetApp() App {
-	return app
+func (s *Server) GetApp() App {
+	return s.app
 }
 
 func (s *Server) appLoader(file string) {
-	app = loadDataFromFile(file)
+	s.app = loadDataFromFile(file)
 	for {
 		select {
 		case event, ok := <-s.watch.GetEventChan():
@@ -30,7 +30,7 @@ func (s *Server) appLoader(file string) {
 				return
 			}
 			if event.Operation&watcher.Write != 0 {
-				app = loadDataFromFile(file)
+				s.app = loadDataFromFile(file)
 			} else {
 				log.Info("Operation was not write")
 			}
