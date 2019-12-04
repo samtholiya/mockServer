@@ -1,9 +1,7 @@
 package watcher
 
 import (
-	"fmt"
 	"os"
-	"sync"
 	"testing"
 	"time"
 
@@ -22,23 +20,7 @@ func TestFsnotifyWrapper(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	wevent := Event{}
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		for i := 0; i < 2; i++ {
-			select {
-			case wevent = <-watcher.GetEventChan():
-				log.Info(wevent)
-			case err := <-watcher.GetErrorChan():
-				t.Error(err)
-			case <-time.After(1 * time.Second):
-				t.Error("No event was generated")
-			}
-		}
-		fmt.Println("Done")
-		wg.Done()
-	}()
+	var wevent Event
 
 	file, err := os.Create("./sample_generated.yaml")
 	if err != nil {
@@ -46,20 +28,27 @@ func TestFsnotifyWrapper(t *testing.T) {
 		return
 	}
 	file.Close()
+	select {
+	case wevent = <-watcher.GetEventChan():
+		log.Info(wevent)
+	case err := <-watcher.GetErrorChan():
+		t.Error(err)
+	case <-time.After(1 * time.Second):
+		t.Error("No event was generated")
+	}
 	os.Remove("./sample_generated.yaml")
-	// select {
-	// case wevent = <-watcher.GetEventChan():
-	// 	log.Info(wevent)
-	// case err := <-watcher.GetErrorChan():
-	// 	t.Error(err)
-	// case <-time.After(1 * time.Second):
-	// 	t.Error("No event was generated after removal of file")
-	// }
-	wg.Wait()
+	select {
+	case wevent = <-watcher.GetEventChan():
+		log.Info(wevent)
+	case err := <-watcher.GetErrorChan():
+		t.Error(err)
+	case <-time.After(1 * time.Second):
+		t.Error("No event was generated after removal of file")
+	}
 	watcher.Close()
 
 	if f, ok := <-watcher.GetEventChan(); ok {
+		log.Error(f)
 		t.Error("Channel is not closed")
-		fmt.Println(f)
 	}
 }
