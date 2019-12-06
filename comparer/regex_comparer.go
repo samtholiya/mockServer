@@ -43,8 +43,8 @@ func (r regexComparer) MapString(compareFrom map[string]string, compareTo map[st
 }
 
 func (r regexComparer) MapStringArr(compareFrom map[string][]string, compareTo map[string][]string) bool {
-	if len(compareFrom) != len(compareTo) {
-		return false
+	if len(compareFrom) == 0 {
+		return true
 	}
 	for k := range compareFrom {
 		if v, ok := compareTo[k]; ok {

@@ -2,8 +2,8 @@ package skeleton
 
 //App struct for getting all api
 type App struct {
-	Post API
-	Get  API
+	Post []API
+	Get  []API
 }
 
 //API struct for getting different api scenarios
@@ -20,13 +20,13 @@ type Scenario struct {
 }
 
 type Request struct {
-	Header  map[string]string
-	Query   map[string]string
+	Header  map[string][]string
+	Query   map[string][]string
 	Payload Payload
 }
 
 type Response struct {
-	Header     map[string]string
+	Header     map[string][]string
 	Payload    Payload
 	StatusCode int
 }
