@@ -25,7 +25,10 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 		w.Header().Set(key, scenario.Response.Header[key][0])
 	}
 	if strings.Compare(scenario.Response.Payload.Type, "text") == 0 {
-		w.Write([]byte(scenario.Response.Payload.Data))
+		_, err := w.Write([]byte(scenario.Response.Payload.Data))
+		if err != nil {
+			log.Error(err)
+		}
 	}
 	if strings.Compare(scenario.Response.Payload.Type, "file") == 0 {
 		file, err := os.Open(scenario.Response.Payload.Data)
@@ -40,7 +43,9 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 		//Create a buffer to store the header of the file in
 		FileHeader := make([]byte, 512)
 		//Copy the headers into the FileHeader buffer
-		file.Read(FileHeader)
+		if _, err = file.Read(FileHeader); err != nil {
+			log.Error(err)
+		}
 		//Get content type of file
 		FileContentType := http.DetectContentType(FileHeader)
 
@@ -55,8 +60,13 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 
 		//Send the file
 		//We read 512 bytes from the file already, so we reset the offset back to 0
-		file.Seek(0, 0)
-		io.Copy(w, file)
+		if _, err = file.Seek(0, 0); err != nil {
+			log.Error(err)
+		} else {
+			if _, err = io.Copy(w, file); err != nil {
+				log.Error(err)
+			}
+		}
 	}
 	w.WriteHeader(scenario.Response.StatusCode)
 }

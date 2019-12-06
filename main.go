@@ -16,17 +16,6 @@ import (
 	"github.com/samtholiya/apiMocker/skeleton"
 )
 
-func final(w http.ResponseWriter, r *http.Request) {
-	log.Println("Executing finalHandler")
-	switch r.Method {
-	case "GET":
-		log.Println(r.URL)
-	case "POST":
-
-	}
-	w.Write([]byte("Hello"))
-}
-
 func main() {
 	// finalHandler := http.HandlerFunc(final)
 	// watch, err := watcher.NewFsWatcher()
@@ -54,11 +43,14 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		server.ServeHTTP(w, r)
 	})
-	http.ListenAndServe(":3000", nil)
+	if err = http.ListenAndServe(":3000", nil); err != nil {
+		log.Error(err)
+	}
 }
 
 func SetupCloseHandler(server skeleton.Server) {
 	c := make(chan os.Signal, 2)
+	log.Println("Press Ctrl+C to close the server")
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
