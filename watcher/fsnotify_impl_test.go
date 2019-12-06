@@ -20,6 +20,8 @@ func TestFsnotifyWrapper(t *testing.T) {
 		t.Error(err)
 		return
 	}
+	var wevent Event
+
 	file, err := os.Create("./sample_generated.yaml")
 	if err != nil {
 		t.Error(err)
@@ -27,16 +29,16 @@ func TestFsnotifyWrapper(t *testing.T) {
 	}
 	file.Close()
 	select {
-	case wevent := <-watcher.GetEventChan():
+	case wevent = <-watcher.GetEventChan():
 		log.Info(wevent)
 	case err := <-watcher.GetErrorChan():
 		t.Error(err)
 	case <-time.After(1 * time.Second):
-		t.Error("No event was generated after creation")
+		t.Error("No event was generated")
 	}
 	os.Remove("./sample_generated.yaml")
 	select {
-	case wevent := <-watcher.GetEventChan():
+	case wevent = <-watcher.GetEventChan():
 		log.Info(wevent)
 	case err := <-watcher.GetErrorChan():
 		t.Error(err)
@@ -44,7 +46,9 @@ func TestFsnotifyWrapper(t *testing.T) {
 		t.Error("No event was generated after removal of file")
 	}
 	watcher.Close()
-	if _, ok := <-watcher.GetEventChan(); ok {
+
+	if f, ok := <-watcher.GetEventChan(); ok {
+		log.Error(f)
 		t.Error("Channel is not closed")
 	}
 }

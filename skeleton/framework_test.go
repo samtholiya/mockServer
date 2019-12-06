@@ -12,15 +12,15 @@ import (
 
 func TestYamlSchema(t *testing.T) {
 	app := App{}
-	app.Post.Scenarios = append(app.Post.Scenarios, Scenario{})
+	app.Post = append(app.Post, API{})
+	app.Post[0].Scenarios = append(app.Post[0].Scenarios, Scenario{})
+	app.Post[0].Scenarios[0].Request.Header = make(map[string][]string)
+	app.Post[0].Scenarios[0].Request.Header["Key1"] = []string{"Value1"}
+	app.Post[0].Scenarios[0].Request.Header["Key2"] = []string{"Value2"}
 
-	app.Post.Scenarios[0].Request.Header = make(map[string]string)
-	app.Post.Scenarios[0].Request.Header["Key1"] = "Value1"
-	app.Post.Scenarios[0].Request.Header["Key2"] = "Value2"
-
-	app.Post.Scenarios[0].Request.Query = make(map[string]string)
-	app.Post.Scenarios[0].Request.Query["Key1"] = "Value1"
-	app.Post.Scenarios[0].Request.Query["Key2"] = "Value2"
+	app.Post[0].Scenarios[0].Request.Query = make(map[string][]string)
+	app.Post[0].Scenarios[0].Request.Query["Key1"] = []string{"Value1"}
+	app.Post[0].Scenarios[0].Request.Query["Key2"] = []string{"Value2"}
 
 	dataFound, _ := yaml.Marshal(app)
 	if os.Getenv("DEBUG") == "true" {

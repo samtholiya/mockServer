@@ -4,11 +4,11 @@ import "testing"
 
 func TestRegexComparer(t *testing.T) {
 	reg := NewRegexComparer()
-	result := reg.CompareString("\\w+-abc", "asdfsadf-abc")
+	result := reg.String("\\w+-abc", "asdfsadf-abc")
 	if !result {
 		t.Error("Regex string should match")
 	}
-	result = reg.CompareString("\\w+-abc", "asdfsadfabc")
+	result = reg.String("\\w+-abc", "asdfsadfabc")
 	if result {
 		t.Error("Regex string should not match")
 	}
@@ -22,18 +22,31 @@ func TestRegexComparer(t *testing.T) {
 		"There": "asdfasdf-asdfasdf",
 	}
 
-	if result = reg.CompareMapString(regexMap, tempMap); !result {
+	if result = reg.MapString(regexMap, tempMap); !result {
 		t.Error("Regex map should match")
 	}
 
-	
 	tempMap = map[string]string{
 		"Hello": "asdfsaabc",
 		"There": "asdfasdfasdfasdf",
 	}
 
-	if result = reg.CompareMapString(regexMap, tempMap); result {
+	if result = reg.MapString(regexMap, tempMap); result {
 		t.Error("Regex map should not match")
+	}
+
+	regexMapArr := map[string][]string{
+		"Hello": []string{"\\w+-abc"},
+		"There": []string{"\\w+-\\w+"},
+	}
+
+	tempMapArr := map[string][]string{
+		"Hello": []string{"asdfsa-abc"},
+		"There": []string{"asdfasdf-asdfasdf"},
+	}
+
+	if result = reg.MapStringArr(regexMapArr, tempMapArr); !result {
+		t.Error("Regex map should match")
 	}
 
 }
