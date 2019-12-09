@@ -1,26 +1,25 @@
 package skeleton
 
 import (
+	"github.com/samtholiya/apiMocker/types"
 	"net/http"
-	"github.com/samtholiya/apiMocker/comparer"
 
-	"github.com/samtholiya/apiMocker/watcher"
 )
 
 //Server contains watcher and other server
 type Server struct {
-	watch   watcher.Watcher
-	compare comparer.Comparer
+	watch   types.Watcher
+	compare types.Comparer
 	app     *App
 }
 
 //SetWatcher sets the watcher for the server
-func (s *Server) SetWatcher(watch watcher.Watcher) {
+func (s *Server) SetWatcher(watch types.Watcher) {
 	s.watch = watch
 }
 
 //SetComparer sets the compare algo for the server
-func (s *Server) SetComparer(compare comparer.Comparer) {
+func (s *Server) SetComparer(compare types.Comparer) {
 	s.compare = compare
 }
 

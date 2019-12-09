@@ -4,6 +4,8 @@ import (
 	"context"
 	"runtime"
 
+	"github.com/samtholiya/apiMocker/types"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/samtholiya/apiMocker/common"
 	"github.com/sirupsen/logrus"
@@ -14,7 +16,7 @@ type fsnoti struct {
 	ctx          context.Context
 	cancelCtx    context.CancelFunc
 	log          *logrus.Logger
-	eventChannel chan Event
+	eventChannel chan types.Event
 }
 
 //GetErrorChan returns channel which will output errors in the watcher
@@ -23,12 +25,12 @@ func (fs *fsnoti) GetErrorChan() chan error {
 }
 
 //NewFsWatcher returns a watcher with implementation by fsnotify library
-func NewFsWatcher() (Watcher, error) {
+func NewFsWatcher() (types.Watcher, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
 	}
-	eventChan := make(chan Event)
+	eventChan := make(chan types.Event)
 	common.GetLogger()
 	ctx := context.Background()
 	ctx, cancelCtx := context.WithCancel(ctx)
@@ -68,24 +70,24 @@ func (fs *fsnoti) runAsyncEventConv() {
 }
 
 //GetEventChan returns channel which will output file system notification.
-func (fs *fsnoti) GetEventChan() chan Event {
+func (fs *fsnoti) GetEventChan() chan types.Event {
 	return fs.eventChannel
 }
 
-func (fs fsnoti) parseEvent(event fsnotify.Event) Event {
-	tempValue := Event{}
+func (fs fsnoti) parseEvent(event fsnotify.Event) types.Event {
+	tempValue := types.Event{}
 	tempValue.Name = event.Name
 	switch event.Op {
 	case fsnotify.Create:
-		tempValue.Operation = Create
+		tempValue.Operation = types.Create
 	case fsnotify.Remove:
-		tempValue.Operation = Remove
+		tempValue.Operation = types.Remove
 	case fsnotify.Write:
-		tempValue.Operation = Write
+		tempValue.Operation = types.Write
 	case fsnotify.Rename:
-		tempValue.Operation = Rename
+		tempValue.Operation = types.Rename
 	case fsnotify.Chmod:
-		tempValue.Operation = Chmod
+		tempValue.Operation = types.Chmod
 	}
 	return tempValue
 }

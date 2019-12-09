@@ -1,4 +1,4 @@
-package watcher
+package types
 
 import "bytes"
 
