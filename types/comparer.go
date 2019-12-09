@@ -1,4 +1,4 @@
-package comparer
+package types
 
 //Comparer Compares Different objects
 type Comparer interface {

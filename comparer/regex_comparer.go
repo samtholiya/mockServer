@@ -3,6 +3,8 @@ package comparer
 import (
 	"regexp"
 
+	"github.com/samtholiya/apiMocker/types"
+
 	"github.com/samtholiya/apiMocker/common"
 
 	"github.com/sirupsen/logrus"
@@ -64,7 +66,7 @@ func (r regexComparer) MapStringArr(compareFrom map[string][]string, compareTo m
 }
 
 //NewRegexComparer returns a regex comparer
-func NewRegexComparer() Comparer {
+func NewRegexComparer() types.Comparer {
 	return &regexComparer{
 		log: common.GetLogger(),
 	}

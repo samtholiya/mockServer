@@ -4,8 +4,9 @@ import (
 	"io/ioutil"
 	"runtime"
 
+	"github.com/samtholiya/apiMocker/types"
+
 	"github.com/samtholiya/apiMocker/common"
-	"github.com/samtholiya/apiMocker/watcher"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -30,7 +31,7 @@ func (s *Server) appLoader(file string) {
 				log.Info("Exiting goroutine for monitoring file change")
 				return
 			}
-			if event.Operation&watcher.Write != 0 {
+			if event.Operation&types.Write == types.Write {
 				s.loadDataFromFile(file)
 			} else {
 				log.Info("Operation was not write")

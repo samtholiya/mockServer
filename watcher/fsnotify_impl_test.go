@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/samtholiya/apiMocker/common"
+	"github.com/samtholiya/apiMocker/types"
 )
 
 func TestFsnotifyWrapper(t *testing.T) {
@@ -20,7 +21,7 @@ func TestFsnotifyWrapper(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	var wevent Event
+	var wevent types.Event
 
 	file, err := os.Create("./sample_generated.yaml")
 	if err != nil {
