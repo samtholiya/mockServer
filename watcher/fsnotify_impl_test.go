@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samtholiya/apiMocker/common"
-	"github.com/samtholiya/apiMocker/types"
+	"github.com/samtholiya/mockServer/common"
+	"github.com/samtholiya/mockServer/types"
 )
 
 func TestFsnotifyWrapper(t *testing.T) {

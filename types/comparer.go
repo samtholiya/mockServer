@@ -11,4 +11,7 @@ type Comparer interface {
 
 	//MapStringArr returns a bool as true if both the map matches
 	MapStringArr(map[string][]string, map[string][]string) bool
+
+	//JSONString returns a bool as true if both the json string match
+	JSONString(string, string) bool
 }

@@ -4,10 +4,10 @@ import (
 	"context"
 	"runtime"
 
-	"github.com/samtholiya/apiMocker/types"
+	"github.com/samtholiya/mockServer/types"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/samtholiya/apiMocker/common"
+	"github.com/samtholiya/mockServer/common"
 	"github.com/sirupsen/logrus"
 )
 
