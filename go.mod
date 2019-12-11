@@ -1,4 +1,4 @@
-module github.com/samtholiya/apiMocker
+module github.com/samtholiya/mockServer
 
 go 1.13
 

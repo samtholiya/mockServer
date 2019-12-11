@@ -1,9 +1,9 @@
 package skeleton
 
 import (
-	"github.com/samtholiya/apiMocker/types"
 	"net/http"
 
+	"github.com/samtholiya/mockServer/types"
 )
 
 //Server contains watcher and other server

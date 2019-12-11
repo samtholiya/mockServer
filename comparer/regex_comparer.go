@@ -1,11 +1,13 @@
 package comparer
 
 import (
+	"encoding/json"
+	"fmt"
 	"regexp"
 
-	"github.com/samtholiya/apiMocker/types"
+	"github.com/samtholiya/mockServer/types"
 
-	"github.com/samtholiya/apiMocker/common"
+	"github.com/samtholiya/mockServer/common"
 
 	"github.com/sirupsen/logrus"
 )
@@ -61,6 +63,103 @@ func (r regexComparer) MapStringArr(compareFrom map[string][]string, compareTo m
 		} else {
 			return false
 		}
+	}
+	return true
+}
+
+func (r regexComparer) JSONString(compareFrom string, compareTo string) bool {
+	from := make(map[string]interface{})
+	to := make(map[string]interface{})
+	if err := json.Unmarshal([]byte(compareFrom), &from); err != nil {
+		r.log.Errorf("%v occured in compareFrom string", err)
+		return false
+	}
+	if err := json.Unmarshal([]byte(compareTo), &to); err != nil {
+		r.log.Errorf("%v occured in compareTo string", err)
+		return false
+	}
+	return r.JSONMap(from, to)
+}
+
+func (r regexComparer) JSONMap(compareFrom map[string]interface{}, compareTo map[string]interface{}) bool {
+	return r.rootJSON(compareFrom, compareTo)
+}
+
+func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]interface{}) bool {
+	for k, v := range x {
+		switch vv := v.(type) {
+		case map[string]interface{}:
+		case []interface{}:
+		case string:
+			fmt.Println("-----------------------")
+			fmt.Println(vv)
+			fmt.Println(compareTo[k])
+			if val, ok := compareTo[k].(string); ok {
+				if !r.String(vv, val) {
+					return false
+				}
+			} else {
+				return false
+			}
+		case float64:
+			if val, ok := compareTo[k].(float64); ok {
+				if val != vv {
+					return false
+				}
+			}
+		default:
+			if !r.rootJSON(v, compareTo[k]) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (r regexComparer) iterSlice(x []interface{}, compareTo []interface{}) bool {
+	for k, v := range x {
+		switch vv := v.(type) {
+		case map[string]interface{}:
+		case []interface{}:
+		case string:
+			fmt.Println(vv)
+			if val, ok := compareTo[k].(string); ok {
+				if !r.String(vv, val) {
+					return false
+				}
+			} else {
+				return false
+			}
+		case float64:
+			if val, ok := compareTo[k].(float64); ok {
+				if val != vv {
+					return false
+				}
+			}
+		default:
+			if !r.rootJSON(v, compareTo[k]) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (r regexComparer) rootJSON(v interface{}, compareTo interface{}) bool {
+	switch vv := v.(type) {
+	case map[string]interface{}:
+		if val, ok := compareTo.(map[string]interface{}); ok {
+			return r.iterMap(vv, val)
+		}
+		return false
+
+	case []interface{}:
+		if val, ok := compareTo.([]interface{}); ok {
+			return r.iterSlice(vv, val)
+		}
+		return false
+	default:
+
 	}
 	return true
 }

@@ -88,6 +88,15 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []Scenario) Scena
 			if !s.compare.String(scenarios[i].Request.Payload.Data, string(payload)) {
 				continue
 			}
+		} else if scenarios[i].Request.Payload.Type == "json" {
+			payload, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
+			if !s.compare.String(scenarios[i].Request.Payload.Data, string(payload)) {
+				continue
+			}
 		}
 		return scenarios[i]
 	}

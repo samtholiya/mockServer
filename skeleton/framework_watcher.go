@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"runtime"
 
-	"github.com/samtholiya/apiMocker/types"
+	"github.com/samtholiya/mockServer/types"
 
-	"github.com/samtholiya/apiMocker/common"
+	"github.com/samtholiya/mockServer/common"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )

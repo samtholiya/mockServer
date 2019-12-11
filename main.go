@@ -7,13 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/samtholiya/apiMocker/comparer"
+	"github.com/samtholiya/mockServer/comparer"
 
-	"github.com/samtholiya/apiMocker/common"
+	"github.com/samtholiya/mockServer/common"
 
-	"github.com/samtholiya/apiMocker/watcher"
+	"github.com/samtholiya/mockServer/watcher"
 
-	"github.com/samtholiya/apiMocker/skeleton"
+	"github.com/samtholiya/mockServer/skeleton"
 )
 
 func main() {
