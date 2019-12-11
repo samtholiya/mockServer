@@ -94,7 +94,7 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []Scenario) Scena
 				log.Error(err)
 				continue
 			}
-			if !s.compare.String(scenarios[i].Request.Payload.Data, string(payload)) {
+			if !s.compare.JSONString(scenarios[i].Request.Payload.Data, string(payload)) {
 				continue
 			}
 		}
