@@ -19,7 +19,8 @@ post:
     response:
       header: {}
       payload:
-        type: ""
-        data: ""
+        type: json
+        data: '{"Name":"Sam","Number":23,"Desc":"Something really nothing and then
+          \\w+ \\d+ [] {}%^\u0026*"}'
       statuscode: 0
 get: []
