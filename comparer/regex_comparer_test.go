@@ -2,7 +2,6 @@ package comparer
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 )
 
@@ -82,8 +81,4 @@ func TestJSONMatcher(t *testing.T) {
 	if result {
 		t.Error("JSON Comparer should return false")
 	}
-}
-
-func To(c interface{}) {
-	fmt.Println(c.(string))
 }
