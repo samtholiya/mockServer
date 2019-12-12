@@ -26,6 +26,7 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 		w.Header().Set(key, scenario.Response.Header[key][0])
 	}
 	if strings.Compare(scenario.Response.Payload.Type, "text") == 0 {
+		w.WriteHeader(scenario.Response.StatusCode)
 		_, err := w.Write([]byte(scenario.Response.Payload.Data))
 		if err != nil {
 			log.Error(err)
@@ -58,7 +59,7 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 		w.Header().Set("Content-Disposition", "attachment; filename="+file.Name())
 		w.Header().Set("Content-Type", FileContentType)
 		w.Header().Set("Content-Length", FileSize)
-
+		w.WriteHeader(scenario.Response.StatusCode)
 		//Send the file
 		//We read 512 bytes from the file already, so we reset the offset back to 0
 		if _, err = file.Seek(0, 0); err != nil {
@@ -72,7 +73,6 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 	if scenario.Response.Delay > 0 {
 		time.Sleep(time.Duration(scenario.Response.Delay) * time.Second)
 	}
-	w.WriteHeader(scenario.Response.StatusCode)
 }
 
 func (s *Server) getMatchedScenario(r *http.Request, scenarios []Scenario) Scenario {

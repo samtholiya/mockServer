@@ -29,6 +29,7 @@ func (s *Server) SetApp(app App) {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Infof("%v Url %v method", r.URL, r.Method)
 	s.handler(w, r)
 }
 
