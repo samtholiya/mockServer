@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []API) {
@@ -67,6 +68,9 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 				log.Error(err)
 			}
 		}
+	}
+	if scenario.Response.Delay > 0 {
+		time.Sleep(time.Duration(scenario.Response.Delay) * time.Second)
 	}
 	w.WriteHeader(scenario.Response.StatusCode)
 }

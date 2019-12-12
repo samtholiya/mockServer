@@ -31,6 +31,7 @@ type Response struct {
 	Header     map[string][]string
 	Payload    Payload
 	StatusCode int
+	Delay	   int
 }
 
 //Payload contains data about payload
