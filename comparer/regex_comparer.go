@@ -2,8 +2,8 @@ package comparer
 
 import (
 	"encoding/json"
-	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/samtholiya/mockServer/types"
 
@@ -18,6 +18,10 @@ type regexComparer struct {
 
 //String returns a bool as true if both the string matches
 func (r regexComparer) String(pattern string, str string) bool {
+	//To be moved to a different package in future
+	if strings.Compare(pattern, "{{ignore_string}}") == 0 {
+		return true
+	}
 	matched, err := regexp.MatchString(pattern, str)
 	if err != nil {
 		r.log.Errorf("Looks like Regex is not valid %v", err)
@@ -33,10 +37,7 @@ func (r regexComparer) MapString(compareFrom map[string]string, compareTo map[st
 
 	for k := range compareFrom {
 		if v, ok := compareTo[k]; ok {
-			if temp, err := regexp.MatchString(compareFrom[k], v); !temp || err != nil {
-				if err != nil {
-					r.log.Error(err)
-				}
+			if temp := r.String(compareFrom[k], v); !temp {
 				return false
 			}
 		} else {
@@ -53,10 +54,7 @@ func (r regexComparer) MapStringArr(compareFrom map[string][]string, compareTo m
 	for k := range compareFrom {
 		if v, ok := compareTo[k]; ok {
 			for i := range compareFrom[k] {
-				if temp, err := regexp.MatchString(compareFrom[k][i], v[i]); !temp || err != nil {
-					if err != nil {
-						r.log.Error(err)
-					}
+				if temp := r.String(compareFrom[k][i], v[i]); !temp {
 					return false
 				}
 			}
@@ -91,9 +89,6 @@ func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]in
 		case map[string]interface{}:
 		case []interface{}:
 		case string:
-			fmt.Println("-----------------------")
-			fmt.Println(vv)
-			fmt.Println(compareTo[k])
 			if val, ok := compareTo[k].(string); ok {
 				if !r.String(vv, val) {
 					return false
@@ -122,7 +117,6 @@ func (r regexComparer) iterSlice(x []interface{}, compareTo []interface{}) bool 
 		case map[string]interface{}:
 		case []interface{}:
 		case string:
-			fmt.Println(vv)
 			if val, ok := compareTo[k].(string); ok {
 				if !r.String(vv, val) {
 					return false
