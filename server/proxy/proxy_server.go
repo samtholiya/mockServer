@@ -49,10 +49,11 @@ func (p *proxyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 //NewProxyServer returns a proxy server
 func NewProxyServer(host string) types.Proxy {
+	app := model.New()
 	proxy := proxyServer{
 		log:  common.GetLogger(),
 		Host: host,
-		app:  &model.App{},
+		app:  &app,
 	}
 	proxy.Init(true)
 	return &proxy
