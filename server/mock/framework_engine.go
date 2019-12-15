@@ -15,7 +15,8 @@ import (
 
 func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []model.API) {
 	for i := range apis {
-		if s.compare.String(apis[i].Endpoint, r.URL.String()) {
+		if s.compare.String(apis[i].Endpoint, r.URL.EscapedPath()) {
+			log.Tracef("Url %v matched with %v", apis[i].Endpoint, r.URL.EscapedPath())
 			scenario := s.getMatchedScenario(r, apis[i].Scenarios)
 			s.writeResponse(w, scenario)
 			return
@@ -28,7 +29,7 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 	for key := range scenario.Response.Header {
 		w.Header().Set(key, scenario.Response.Header[key][0])
 	}
-	if strings.Compare(scenario.Response.Payload.Type, "text") == 0 {
+	if strings.Compare(scenario.Response.Payload.Type, "text") == 0 || strings.Compare(scenario.Response.Payload.Type, "json") == 0 {
 		w.WriteHeader(scenario.Response.StatusCode)
 		_, err := w.Write([]byte(scenario.Response.Payload.Data))
 		if err != nil {
@@ -92,9 +93,11 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario) model.Scenario {
 	for i := range scenarios {
 		if !s.compare.MapStringArr(scenarios[i].Request.Header, r.Header) {
+			log.Debugf("%v does not matches due to request headers", i)
 			continue
 		}
 		if !s.compare.MapStringArr(scenarios[i].Request.Query, r.URL.Query()) {
+			log.Debugf("%v does not matches due to request Query", i)
 			continue
 		}
 		if scenarios[i].Request.Payload.Type == "text" {
@@ -104,6 +107,7 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 				continue
 			}
 			if !s.compare.String(scenarios[i].Request.Payload.Data, string(payload)) {
+				log.Debugf("%v does not matches due to request Data", i)
 				continue
 			}
 		} else if scenarios[i].Request.Payload.Type == "json" {
@@ -113,10 +117,23 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 				continue
 			}
 			if !s.compare.JSONString(scenarios[i].Request.Payload.Data, string(payload)) {
+				log.Debugf("%v does not matches due to request data", i)
+				continue
+			}
+		} else if scenarios[i].Request.Payload.Type == "base64" {
+			payload, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
+			if strings.Compare(scenarios[i].Request.Payload.Data, base64.StdEncoding.EncodeToString(payload)) != 0 {
+				log.Debugf("%v does not matches due to request data", i)
 				continue
 			}
 		}
+		log.Debugf("%v scenario matched", scenarios[i])
 		return scenarios[i]
 	}
+	log.Debug("No scenario matched")
 	return model.Scenario{}
 }
