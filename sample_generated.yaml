@@ -1,27 +1,28 @@
-post:
-- description: ""
-  endpoint: ""
-  scenarios:
-  - request:
-      header:
-        Key1:
-        - Value1
-        Key2:
-        - Value2
-      query:
-        Key1:
-        - Value1
-        Key2:
-        - Value2
-      payload:
-        type: ""
-        data: ""
-    response:
-      header: {}
-      payload:
-        type: json
-        data: '{"Name":"Sam","Number":23,"Desc":"Something really nothing and then
-          \\w+ \\d+ [] {}%^\u0026*"}'
-      statuscode: 0
-      delay: 0
-get: []
+version: ""
+api:
+  POST:
+  - description: ""
+    endpoint: ""
+    scenarios:
+    - request:
+        header:
+          Key1:
+          - Value1
+          Key2:
+          - Value2
+        query:
+          Key1:
+          - Value1
+          Key2:
+          - Value2
+        payload:
+          type: ""
+          data: ""
+      response:
+        header: {}
+        payload:
+          type: json
+          data: '{"Name":"Sam","Number":23,"Desc":"Something really nothing and then
+            \\w+ \\d+ [] {}%^\u0026*"}'
+        statuscode: 0
+        delay: 0

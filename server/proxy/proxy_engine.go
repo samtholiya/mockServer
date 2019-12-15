@@ -13,39 +13,45 @@ import (
 )
 
 func (p *proxyServer) copyRequest(r *http.Request) (*http.Request, []byte) {
-
-	switch r.Method {
-	case "POST":
-		body, _ := ioutil.ReadAll(r.Body)
-		req, err := http.NewRequest(r.Method, p.Host+r.RequestURI, bytes.NewBuffer(body))
-		if err != nil {
-			p.log.Error(err)
-			return nil, nil
-		}
-		req.Header = r.Header
-		return req, body
-
-	case "GET":
-		req, err := http.NewRequest(r.Method, p.Host+r.RequestURI, r.Body)
-		if err != nil {
-			p.log.Error(err)
-			return nil, nil
-		}
-		req.Header = r.Header
-		return req, nil
+	body, _ := ioutil.ReadAll(r.Body)
+	req, err := http.NewRequest(r.Method, p.Host+r.RequestURI, bytes.NewBuffer(body))
+	if err != nil {
+		p.log.Error(err)
+		return nil, nil
 	}
-
-	return nil, nil
+	req.Header = r.Header
+	return req, body
 }
 
 func (p *proxyServer) copyToApp(r *http.Request, body []byte, resp *http.Response, respData []byte) {
-	switch r.Method {
-	case "POST":
-		p.copyPostScenario(r, body, resp, respData)
-	case "GET":
-		p.copyGetScenario(r, body, resp, respData)
-	}
+	p.copyScenario(r, body, resp, respData)
 	p.writeToFile()
+}
+
+func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.Response, respData []byte) {
+	scen := model.Scenario{}
+	scen.Request.Header = r.Header
+	scen.Request.Query = r.URL.Query()
+
+	temp := &model.API{}
+	flag := true
+	for i := range p.app.API[r.Method] {
+		if r.URL.Path == p.app.API[r.Method][i].Endpoint {
+			temp = &p.app.API[r.Method][i]
+			flag = false
+			break
+		}
+	}
+	if r.Header.Get("Content-Type") == "application/json" {
+		scen.Request.Payload.Type = "json"
+		scen.Request.Payload.Data = string(reqBody)
+	}
+	scen.Response = p.copyResponse(resp, respData)
+	temp.Scenarios = append(temp.Scenarios, scen)
+	if flag {
+		temp.Endpoint = r.URL.Path
+		p.app.API[r.Method] = append(p.app.API[r.Method], *temp)
+	}
 }
 
 func (p proxyServer) writeToFile() {
