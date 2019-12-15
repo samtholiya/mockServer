@@ -2,8 +2,8 @@ package model
 
 //App struct for getting all api
 type App struct {
-	Post []API
-	Get  []API
+	Version string
+	API     map[string][]API
 }
 
 //API struct for getting different api scenarios
@@ -38,4 +38,11 @@ type Response struct {
 type Payload struct {
 	Type string
 	Data string
+}
+
+//New returns an instance of app
+func New() App {
+	return App{
+		API: make(map[string][]API),
+	}
 }
