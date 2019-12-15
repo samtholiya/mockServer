@@ -41,7 +41,10 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 		if err != nil {
 			http.Error(w, err.Error(), 503)
 		}
-		w.Write(data)
+		_, err = w.Write(data)
+		if err != nil {
+			log.Error(err)
+		}
 	}
 	if strings.Compare(scenario.Response.Payload.Type, "file") == 0 {
 		file, err := os.Open(scenario.Response.Payload.Data)
