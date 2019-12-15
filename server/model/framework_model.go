@@ -1,4 +1,4 @@
-package skeleton
+package model
 
 //App struct for getting all api
 type App struct {
@@ -31,7 +31,7 @@ type Response struct {
 	Header     map[string][]string
 	Payload    Payload
 	StatusCode int
-	Delay	   int
+	Delay      int
 }
 
 //Payload contains data about payload

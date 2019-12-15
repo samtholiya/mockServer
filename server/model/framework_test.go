@@ -1,4 +1,4 @@
-package skeleton
+package model
 
 import (
 	"encoding/json"
@@ -50,7 +50,7 @@ func TestYamlSchema(t *testing.T) {
 		}
 		file.Close()
 	}
-	dataActual, err := ioutil.ReadFile(common.GetEnv("SAMPLE_YAML", "../sample_generated.yaml"))
+	dataActual, err := ioutil.ReadFile(common.GetEnv("SAMPLE_YAML", "../../sample_generated.yaml"))
 	if err != nil {
 		t.Error(err)
 		return
@@ -62,7 +62,7 @@ func TestYamlSchema(t *testing.T) {
 }
 
 func TestJsonFeature(t *testing.T) {
-	dataActual, err := ioutil.ReadFile(common.GetEnv("SAMPLE_YAML", "../sample_generated.yaml"))
+	dataActual, err := ioutil.ReadFile(common.GetEnv("SAMPLE_YAML", "../../sample_generated.yaml"))
 	if err != nil {
 		t.Error(err)
 		return

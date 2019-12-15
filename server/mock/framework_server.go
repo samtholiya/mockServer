@@ -1,7 +1,9 @@
-package skeleton
+package mock
 
 import (
 	"net/http"
+
+	"github.com/samtholiya/mockServer/server/model"
 
 	"github.com/samtholiya/mockServer/types"
 )
@@ -10,7 +12,7 @@ import (
 type Server struct {
 	watch   types.Watcher
 	compare types.Comparer
-	app     *App
+	app     *model.App
 }
 
 //SetWatcher sets the watcher for the server
@@ -24,7 +26,7 @@ func (s *Server) SetComparer(compare types.Comparer) {
 }
 
 //SetApp the App obj for the server
-func (s *Server) SetApp(app App) {
+func (s *Server) SetApp(app model.App) {
 	s.app = &app
 }
 
