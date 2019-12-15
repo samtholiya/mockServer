@@ -1,9 +1,10 @@
-package skeleton
+package mock
 
 import (
 	"io/ioutil"
 	"runtime"
 
+	"github.com/samtholiya/mockServer/server/model"
 	"github.com/samtholiya/mockServer/types"
 
 	"github.com/samtholiya/mockServer/common"
@@ -18,7 +19,7 @@ func init() {
 }
 
 //GetApp Returns currently loaded App object
-func (s *Server) GetApp() *App {
+func (s *Server) GetApp() *model.App {
 	return s.app
 }
 

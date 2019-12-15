@@ -1,6 +1,7 @@
-package skeleton
+package mock
 
 import (
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -8,9 +9,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/samtholiya/mockServer/server/model"
 )
 
-func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []API) {
+func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []model.API) {
 	for i := range apis {
 		if s.compare.String(apis[i].Endpoint, r.URL.String()) {
 			scenario := s.getMatchedScenario(r, apis[i].Scenarios)
@@ -20,7 +23,7 @@ func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, a
 	}
 }
 
-func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
+func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	for key := range scenario.Response.Header {
 		w.Header().Set(key, scenario.Response.Header[key][0])
@@ -31,6 +34,14 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 		if err != nil {
 			log.Error(err)
 		}
+	}
+	if strings.Compare(scenario.Response.Payload.Type, "base64") == 0 {
+		w.WriteHeader(scenario.Response.StatusCode)
+		data, err := base64.StdEncoding.DecodeString(scenario.Response.Payload.Data)
+		if err != nil {
+			http.Error(w, err.Error(), 503)
+		}
+		w.Write(data)
 	}
 	if strings.Compare(scenario.Response.Payload.Type, "file") == 0 {
 		file, err := os.Open(scenario.Response.Payload.Data)
@@ -75,7 +86,7 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario Scenario) {
 	}
 }
 
-func (s *Server) getMatchedScenario(r *http.Request, scenarios []Scenario) Scenario {
+func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario) model.Scenario {
 	for i := range scenarios {
 		if !s.compare.MapStringArr(scenarios[i].Request.Header, r.Header) {
 			continue
@@ -104,5 +115,5 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []Scenario) Scena
 		}
 		return scenarios[i]
 	}
-	return Scenario{}
+	return model.Scenario{}
 }

@@ -1,4 +1,4 @@
-package skeleton
+package model
 
 import (
 	"encoding/json"
