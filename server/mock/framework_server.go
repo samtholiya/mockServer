@@ -37,10 +37,5 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Executing finalHandler")
-	switch r.Method {
-	case "GET":
-		s.getResponseForRequest(w, r, s.app.Get)
-	case "POST":
-		s.getResponseForRequest(w, r, s.app.Post)
-	}
+	s.getResponseForRequest(w, r, s.app.API[r.Method])
 }

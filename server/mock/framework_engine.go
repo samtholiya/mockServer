@@ -16,7 +16,7 @@ import (
 func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []model.API) {
 	for i := range apis {
 		if s.compare.String(apis[i].Endpoint, r.URL.EscapedPath()) {
-			log.Tracef("Url %v matched with %v", apis[i].Endpoint, r.URL.EscapedPath())
+			log.Debugf("Url %v matched with %v", apis[i].Endpoint, r.URL.EscapedPath())
 			scenario := s.getMatchedScenario(r, apis[i].Scenarios)
 			s.writeResponse(w, scenario)
 			return
