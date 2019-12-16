@@ -21,10 +21,14 @@ import (
 var log *logrus.Logger
 
 func main() {
+	isDebugMode := flag.Bool("debug", false, "Run debug level")
 	isProxyServer := flag.Bool("proxy", false, "Run in proxy server mode")
 	host := flag.String("host", "https://httpbin.org", "Server url for proxy server")
 	port := flag.String("port", "3000", "Port number for the server")
 	flag.Parse()
+	if *isDebugMode {
+		common.GetLogger().SetLevel(logrus.DebugLevel)
+	}
 	if *isProxyServer {
 		startProxyServer(*host, *port)
 	}

@@ -73,7 +73,7 @@ func TestJSONMatcher(t *testing.T) {
 	fd := make(map[string]interface{})
 	fd["df"] = "\\d+"
 	ff, _ := json.Marshal(fd)
-	result := NewRegexComparer().JSONString(string(ff), "{\"df\": \"2342\"}")
+	result := NewRegexComparer().JSONString(string(ff), "{\"df\": \"2342\", \"d1f\": \"23142\"}")
 	if !result {
 		t.Error("JSON Comparer should return true")
 	}
