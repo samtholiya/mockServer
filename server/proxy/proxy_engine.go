@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/samtholiya/mockServer/common"
+
 	"github.com/samtholiya/mockServer/server/model"
 	"gopkg.in/yaml.v2"
 )
@@ -46,6 +48,24 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 		scen.Request.Payload.Type = "json"
 		scen.Request.Payload.Data = string(reqBody)
 	}
+	if strings.Contains(r.Header.Get("Content-Type"), "form") {
+		p.log.Debug("Found Form encoded url")
+		scen.Request.Payload.Type = "file"
+		path := "./request_files/" + common.GetUniqueString(5) + ".req"
+		if err := os.MkdirAll("./request_files", os.ModePerm); err != nil {
+			p.log.Error(err)
+		}
+		tempFile, err := os.Create(path)
+		if err != nil {
+			p.log.Error(err)
+			return
+		}
+		defer tempFile.Close()
+		if _, err = tempFile.Write(reqBody); err != nil {
+			p.log.Error(err)
+		}
+		scen.Request.Payload.Data = path
+	}
 	scen.Response = p.copyResponse(resp, respData)
 	temp.Scenarios = append(temp.Scenarios, scen)
 	if flag {
@@ -56,7 +76,7 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 
 func (p proxyServer) writeToFile() {
 	dataFound, _ := yaml.Marshal(p.app)
-	file, err := os.Create("./proxy_generated.yaml")
+	file, err := os.Create(common.GetEnv("PROXY_GENERATED_CONFIG", "./proxy_generated.yaml"))
 	if err != nil {
 		p.log.Error(err)
 		return

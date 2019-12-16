@@ -1,6 +1,8 @@
 package common
 
 import (
+	"crypto/rand"
+	"fmt"
 	"os"
 )
 
@@ -8,8 +10,18 @@ import (
 func GetEnv(key, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
-		log.Infof("%v not found %v value used", key, fallback)
+		log.Debugf("%v not found %v value used", key, fallback)
 		return fallback
 	}
 	return value
+}
+
+//GetUniqueString returns string of length
+func GetUniqueString(n int) string {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
+	s := fmt.Sprintf("%X", b)
+	return s
 }
