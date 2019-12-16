@@ -121,7 +121,6 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 				continue
 			}
 		} else if scenarios[i].Request.Payload.Type == "file" {
-			fmt.Println("Came here 3")
 			data, err := ioutil.ReadFile(scenarios[i].Request.Payload.Data)
 			if err != nil {
 				log.Error(err)

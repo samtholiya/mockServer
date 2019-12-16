@@ -3,7 +3,6 @@ package proxy
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -51,7 +50,6 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 	}
 	if strings.Contains(r.Header.Get("Content-Type"), "form") {
 		p.log.Debug("Found Form encoded url")
-		fmt.Println("Came here")
 		scen.Request.Payload.Type = "file"
 		path := "./request_files/" + common.GetUniqueString(5) + ".req"
 		os.MkdirAll("./request_files", os.ModePerm)

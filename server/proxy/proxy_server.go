@@ -40,6 +40,9 @@ func (p *proxyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p.log.Error(err)
 	}
+	for k, v := range resp.Header {
+		w.Header().Set(k, v[0])
+	}
 	w.WriteHeader(resp.StatusCode)
 	if _, err = w.Write(data); err != nil {
 		p.log.Error(err)
