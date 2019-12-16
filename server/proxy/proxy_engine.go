@@ -52,16 +52,17 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 		p.log.Debug("Found Form encoded url")
 		scen.Request.Payload.Type = "file"
 		path := "./request_files/" + common.GetUniqueString(5) + ".req"
-		os.MkdirAll("./request_files", os.ModePerm)
+		if err := os.MkdirAll("./request_files", os.ModePerm); err != nil {
+			p.log.Error(err)
+		}
 		tempFile, err := os.Create(path)
 		if err != nil {
 			p.log.Error(err)
 			return
 		}
 		defer tempFile.Close()
-		tempFile.Write(reqBody)
-		if err != nil {
-			panic(err)
+		if _, err = tempFile.Write(reqBody); err != nil {
+			p.log.Error(err)
 		}
 		scen.Request.Payload.Data = path
 	}

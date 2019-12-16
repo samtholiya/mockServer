@@ -125,7 +125,7 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 			if err != nil {
 				log.Error(err)
 			}
-			if bytes.Compare(payload, data) != 0 {
+			if !bytes.Equal(payload, data) {
 				log.Debugf("%v does not matches due to request data", i)
 				continue
 			}
