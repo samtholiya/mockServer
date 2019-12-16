@@ -1,10 +1,13 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/samtholiya/mockServer/server/proxy"
 
 	"github.com/samtholiya/mockServer/comparer"
 	"github.com/samtholiya/mockServer/server/mock"
@@ -18,6 +21,17 @@ import (
 var log *logrus.Logger
 
 func main() {
+	isProxyServer := flag.Bool("proxy", false, "Run in proxy server mode")
+	host := flag.String("host", "https://httpbin.org", "Server url for proxy server")
+	port := flag.String("port", "3000", "Port number for the server")
+	flag.Parse()
+	if *isProxyServer {
+		startProxyServer(*host, *port)
+	}
+	startMockServer(*port)
+}
+
+func startMockServer(port string) {
 	log = common.GetLogger()
 	server := mock.Server{}
 	watch, err := watcher.NewFsWatcher()
@@ -32,7 +46,16 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		server.ServeHTTP(w, r)
 	})
-	if err = http.ListenAndServe(":3000", nil); err != nil {
+	if err = http.ListenAndServe(":"+port, nil); err != nil {
+		log.Error(err)
+	}
+
+}
+
+func startProxyServer(host, port string) {
+	pServer := proxy.NewProxyServer(host)
+	http.Handle("/", pServer)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Error(err)
 	}
 }

@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"bytes"
 	"encoding/base64"
 	"io"
 	"io/ioutil"
@@ -91,6 +92,10 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 }
 
 func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario) model.Scenario {
+	payload, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Error(err)
+	}
 	for i := range scenarios {
 		if !s.compare.MapStringArr(scenarios[i].Request.Header, r.Header) {
 			log.Debugf("%v does not matches due to request headers", i)
@@ -101,32 +106,27 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 			continue
 		}
 		if scenarios[i].Request.Payload.Type == "text" {
-			payload, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
 			if !s.compare.String(scenarios[i].Request.Payload.Data, string(payload)) {
 				log.Debugf("%v does not matches due to request Data", i)
 				continue
 			}
 		} else if scenarios[i].Request.Payload.Type == "json" {
-			payload, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
 			if !s.compare.JSONString(scenarios[i].Request.Payload.Data, string(payload)) {
 				log.Debugf("%v does not matches due to request data", i)
 				continue
 			}
 		} else if scenarios[i].Request.Payload.Type == "base64" {
-			payload, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				log.Error(err)
+			if strings.Compare(scenarios[i].Request.Payload.Data, base64.StdEncoding.EncodeToString(payload)) != 0 {
+				log.Debugf("%v does not matches due to request data", i)
 				continue
 			}
-			if strings.Compare(scenarios[i].Request.Payload.Data, base64.StdEncoding.EncodeToString(payload)) != 0 {
+		} else if scenarios[i].Request.Payload.Type == "file" {
+			fmt.Println("Came here 3")
+			data, err := ioutil.ReadFile(scenarios[i].Request.Payload.Data)
+			if err != nil {
+				log.Error(err)
+			}
+			if bytes.Compare(payload, data) != 0 {
 				log.Debugf("%v does not matches due to request data", i)
 				continue
 			}
