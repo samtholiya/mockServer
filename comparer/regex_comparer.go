@@ -86,8 +86,6 @@ func (r regexComparer) JSONMap(compareFrom map[string]interface{}, compareTo map
 func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]interface{}) bool {
 	for k, v := range x {
 		switch vv := v.(type) {
-		case map[string]interface{}:
-		case []interface{}:
 		case string:
 			if val, ok := compareTo[k].(string); ok {
 				if !r.String(vv, val) {
@@ -114,8 +112,6 @@ func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]in
 func (r regexComparer) iterSlice(x []interface{}, compareTo []interface{}) bool {
 	for k, v := range x {
 		switch vv := v.(type) {
-		case map[string]interface{}:
-		case []interface{}:
 		case string:
 			if val, ok := compareTo[k].(string); ok {
 				if !r.String(vv, val) {

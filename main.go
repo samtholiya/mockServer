@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/samtholiya/mockServer/parser"
+
 	"github.com/samtholiya/mockServer/server/proxy"
 
 	"github.com/samtholiya/mockServer/comparer"
@@ -57,7 +59,7 @@ func startMockServer(port string) {
 }
 
 func startProxyServer(host, port string) {
-	pServer := proxy.NewProxyServer(host)
+	pServer := proxy.NewProxyServer(host, parser.NewYamlParser())
 	http.Handle("/", pServer)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Error(err)

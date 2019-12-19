@@ -11,7 +11,6 @@ import (
 	"github.com/samtholiya/mockServer/common"
 
 	"github.com/samtholiya/mockServer/server/model"
-	"gopkg.in/yaml.v2"
 )
 
 func (p *proxyServer) copyRequest(r *http.Request) (*http.Request, []byte) {
@@ -75,18 +74,9 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 }
 
 func (p proxyServer) writeToFile() {
-	dataFound, _ := yaml.Marshal(p.app)
-	file, err := os.Create(common.GetEnv("PROXY_GENERATED_CONFIG", "./proxy_generated.yaml"))
-	if err != nil {
+	if err := p.dataParser.WriteToFile(p.app, common.GetEnv("PROXY_GENERATED_CONFIG", "./proxy_generated.yaml")); err != nil {
 		p.log.Error(err)
-		return
 	}
-	_, err = file.WriteString(string(dataFound))
-	if err != nil {
-		p.log.Error(err)
-		return
-	}
-	file.Close()
 }
 
 func (p *proxyServer) copyResponse(resp *http.Response, respData []byte) model.Response {

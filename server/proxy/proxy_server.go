@@ -12,10 +12,11 @@ import (
 )
 
 type proxyServer struct {
-	Host   string
-	app    *model.App
-	log    *logrus.Logger
-	client *http.Client
+	Host       string
+	app        *model.App
+	log        *logrus.Logger
+	client     *http.Client
+	dataParser types.DataFormatParser
 }
 
 func (p *proxyServer) Init(insecure bool) {
@@ -51,12 +52,13 @@ func (p *proxyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 //NewProxyServer returns a proxy server
-func NewProxyServer(host string) types.Proxy {
+func NewProxyServer(host string, dataParser types.DataFormatParser) types.Proxy {
 	app := model.New()
 	proxy := proxyServer{
-		log:  common.GetLogger(),
-		Host: host,
-		app:  &app,
+		log:        common.GetLogger(),
+		Host:       host,
+		app:        &app,
+		dataParser: dataParser,
 	}
 	proxy.Init(true)
 	return &proxy
