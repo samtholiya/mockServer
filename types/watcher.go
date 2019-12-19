@@ -63,3 +63,31 @@ func (op Operation) String() string {
 	}
 	return buffer.String()[1:] // Strip leading pipe
 }
+
+//TestWatcher for testing
+type TestWatcher struct{}
+
+// Add starts watching the named file or directory (non-recursively).
+func (t TestWatcher) Add(fileFolder string) error {
+	return nil
+}
+
+// Remove stops watching the the named file or directory (non-recursively).
+func (t TestWatcher) Remove(fileFolder string) error {
+	return nil
+}
+
+// Close removes all watches and closes the events channel.
+func (t TestWatcher) Close() error {
+	return nil
+}
+
+//GetErrorChan returns channel which will output errors in the watcher
+func (t TestWatcher) GetErrorChan() chan error {
+	return nil
+}
+
+//GetEventChan returns channel which will output file system notification.
+func (t TestWatcher) GetEventChan() chan Event {
+	return make(chan Event)
+}
