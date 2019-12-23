@@ -14,6 +14,7 @@ import (
 
 func TestServerHTTPGet(t *testing.T) {
 	server := Server{}
+	filePath := "./mock_watcher.go"
 	server.SetWatcher(types.TestWatcher{})
 	server.SetComparer(comparer.NewRegexComparer())
 	app := model.App{
@@ -55,7 +56,7 @@ func TestServerHTTPGet(t *testing.T) {
 		t.Error("Body not returned as expected")
 	}
 	app.API["GET"][0].Scenarios[0].Response.Payload.Type = "file"
-	app.API["GET"][0].Scenarios[0].Response.Payload.Data = "./framework_watcher.go"
+	app.API["GET"][0].Scenarios[0].Response.Payload.Data = filePath
 	server.SetApp(app)
 	req = httptest.NewRequest("GET", "/get", nil)
 	req.Header.Set("Accept", "application/json")
@@ -65,9 +66,9 @@ func TestServerHTTPGet(t *testing.T) {
 
 	resp = w.Result()
 	body, _ = ioutil.ReadAll(resp.Body)
-	fileData, _ := ioutil.ReadFile("./framework_watcher.go")
+	fileData, _ := ioutil.ReadFile(filePath)
 	if (resp.StatusCode) != 200 {
-		t.Error("Status code should be 200")
+		t.Errorf("Status code should be 200 got %v", resp.StatusCode)
 	}
 	if !bytes.Equal(body, fileData) {
 		t.Error("File reads completed")
