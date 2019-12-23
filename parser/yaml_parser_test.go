@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"os"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -12,6 +12,9 @@ func TestWriteToFile(t *testing.T) {
 	yam := NewYamlParser()
 	temp := map[string]string{
 		"Here": "There",
+	}
+	if err := yam.WriteToFile(temp, "/df/"); err == nil {
+		t.Error("Error writing file should be returned")
 	}
 	if err := yam.WriteToFile(temp, "./yaml_generated.yaml"); err != nil {
 		t.Error(err)
@@ -44,7 +47,7 @@ func TestReadFromFile(t *testing.T) {
 	if !reflect.DeepEqual(temp1, temp) {
 		t.Error("File read results Did not match")
 	}
-	
+
 	if err := os.Remove("./yaml_generated.yaml"); err != nil {
 		t.Error("Error Removing file")
 	}
