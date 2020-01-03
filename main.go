@@ -33,7 +33,7 @@ func main() {
 		common.GetLogger().SetLevel(logrus.DebugLevel)
 	}
 	if *isProxyServer || strings.Compare(common.GetEnv("M_PROXY", "false"), "true") == 0 {
-		startProxyServer(common.GetEnv("M_HOST_URL", *host), common.GetEnv("M_HOST_PORT", *port))
+		startProxyServer(common.GetEnv("M_HOST_URL", *host), common.GetEnv("M_PORT", *port))
 	}
 	startMockServer(*port)
 }
