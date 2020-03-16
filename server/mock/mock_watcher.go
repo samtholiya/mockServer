@@ -52,7 +52,8 @@ func (s *Server) loadDataFromFile(file string) {
 		if err != nil {
 			log.Error(err)
 		}
-		log.Infof("New app structure %v", s.app)
+		log.Infof("New app structure loaded")
+		log.Tracef("App structure: %v", s.app)
 	}
 }
 
