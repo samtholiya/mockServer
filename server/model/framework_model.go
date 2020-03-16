@@ -17,6 +17,7 @@ type API struct {
 type Scenario struct {
 	Request  Request
 	Response Response
+	Delete   bool
 }
 
 //Request contains the request params

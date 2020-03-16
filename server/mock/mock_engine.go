@@ -18,11 +18,22 @@ func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, a
 	for i := range apis {
 		if s.compare.String(apis[i].Endpoint, r.URL.EscapedPath()) {
 			log.Debugf("Url %v matched with %v", apis[i].Endpoint, r.URL.EscapedPath())
-			scenario := s.getMatchedScenario(r, apis[i].Scenarios)
+			scenarioNumber, scenario := s.getMatchedScenario(r, apis[i].Scenarios)
 			s.writeResponse(w, scenario)
+			if scenario.Delete {
+				s.deleteScenario(r.Method, i, scenarioNumber)
+			}
 			return
+		} else {
+			log.Debugf("URL regex %v did not match %v", apis[i].Endpoint, r.URL.EscapedPath())
 		}
 	}
+	log.Warnf("No URL Matched %v", r.URL.EscapedPath())
+	w.WriteHeader(404)
+}
+
+func (s *Server) deleteScenario(methodName string, apiNumber, scenarioNumber int) {
+	s.app.API[methodName][apiNumber].Scenarios = append(s.app.API[methodName][apiNumber].Scenarios[:scenarioNumber], s.app.API[methodName][apiNumber].Scenarios[scenarioNumber+1:]...)
 }
 
 func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
@@ -91,7 +102,7 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 	}
 }
 
-func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario) model.Scenario {
+func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario) (int, model.Scenario) {
 	payload, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Error(err)
@@ -131,8 +142,8 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 			}
 		}
 		log.Debugf("%v scenario matched", scenarios[i])
-		return scenarios[i]
+		return i, scenarios[i]
 	}
 	log.Debug("No scenario matched")
-	return model.Scenario{}
+	return 0, model.Scenario{}
 }
