@@ -26,3 +26,4 @@ api:
             \\w+ \\d+ [] {}%^\u0026*"}'
         statuscode: 0
         delay: 0
+      delete: false

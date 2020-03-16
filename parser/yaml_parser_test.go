@@ -13,7 +13,7 @@ func TestWriteToFile(t *testing.T) {
 	temp := map[string]string{
 		"Here": "There",
 	}
-	if err := yam.WriteToFile(temp, "/df/"); err == nil {
+	if err := yam.WriteToFile(temp, "/dfsam/"); err == nil {
 		t.Error("Error writing file should be returned")
 	}
 	if err := yam.WriteToFile(temp, "./yaml_generated.yaml"); err != nil {
