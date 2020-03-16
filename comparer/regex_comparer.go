@@ -87,18 +87,12 @@ func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]in
 	for k, v := range x {
 		switch vv := v.(type) {
 		case string:
-			if val, ok := compareTo[k].(string); ok {
-				if !r.String(vv, val) {
-					return false
-				}
-			} else {
+			if val, ok := compareTo[k].(string); !ok || !r.String(vv, val) {
 				return false
 			}
 		case float64:
-			if val, ok := compareTo[k].(float64); ok {
-				if val != vv {
-					return false
-				}
+			if val, ok := compareTo[k].(float64); !ok || val != vv {
+				return false
 			}
 		default:
 			if !r.rootJSON(v, compareTo[k]) {
@@ -113,18 +107,12 @@ func (r regexComparer) iterSlice(x []interface{}, compareTo []interface{}) bool 
 	for k, v := range x {
 		switch vv := v.(type) {
 		case string:
-			if val, ok := compareTo[k].(string); ok {
-				if !r.String(vv, val) {
-					return false
-				}
-			} else {
+			if val, ok := compareTo[k].(string); !ok || !r.String(vv, val) {
 				return false
 			}
 		case float64:
-			if val, ok := compareTo[k].(float64); ok {
-				if val != vv {
-					return false
-				}
+			if val, ok := compareTo[k].(float64); !ok || val != vv {
+				return false
 			}
 		default:
 			if !r.rootJSON(v, compareTo[k]) {
@@ -138,16 +126,16 @@ func (r regexComparer) iterSlice(x []interface{}, compareTo []interface{}) bool 
 func (r regexComparer) rootJSON(v interface{}, compareTo interface{}) bool {
 	switch vv := v.(type) {
 	case map[string]interface{}:
-		if val, ok := compareTo.(map[string]interface{}); ok {
-			return r.iterMap(vv, val)
+		if _, ok := compareTo.(map[string]interface{}); !ok {
+			return false
 		}
-		return false
+		return r.iterMap(vv, compareTo.(map[string]interface{}))
 
 	case []interface{}:
-		if val, ok := compareTo.([]interface{}); ok {
-			return r.iterSlice(vv, val)
+		if _, ok := compareTo.([]interface{}); !ok {
+			return false
 		}
-		return false
+		return r.iterSlice(vv, compareTo.([]interface{}))
 	default:
 
 	}

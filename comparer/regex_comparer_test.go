@@ -71,7 +71,7 @@ func TestRegexMapStringArrComparer(t *testing.T) {
 
 func TestJSONMatcher(t *testing.T) {
 	fd := make(map[string]interface{})
-	fd["df"] = "\\d+"
+	fd["df"] = `\d+`
 	fd["ig"] = "{{ignore_string}}"
 	fd["arr"] = []string{"hello"}
 	fd["nArr"] = []float64{23.5}
@@ -84,17 +84,18 @@ func TestJSONMatcher(t *testing.T) {
 	if result {
 		t.Error("JSON Comparer should return false")
 	}
-	result = NewRegexComparer().JSONString(string(ff), "{\"nArr\": [22.5], \"arr\": [\"hello\"], \"df\": \"2342\", \"d1f\": \"23142\", \"ig\": \"{{ignore_string}}\"}")
+	result = NewRegexComparer().JSONString(string(ff), `{"nArr": [22.5], "arr": ["hello"], "df": "2342", "d1f": "23142", "ig": "{{ignore_string}}"}`)
 	if result {
 		t.Error("JSON Comparer should return false")
 	}
+
 	fd["iMap"] = map[string]interface{}{
 		"hello": "world",
 	}
 	temp := `
 	{
-		"nArr": [22.5], 
-		"arr": ["hello"], 
+		"nArr": [22.5],
+		"arr": ["hello"],
 		"df": "2342",
 		"d1f": "23142",
 		"ig": "{{ignore_string}}",
@@ -102,6 +103,26 @@ func TestJSONMatcher(t *testing.T) {
 	}
 	`
 	result = NewRegexComparer().JSONString(string(ff), temp)
+	if result {
+		t.Error("JSON Comparer should return false")
+	}
+}
+
+func TestRandomJson(t *testing.T) {
+	temp := `
+	{"Data":{"Agent":{"CustomerID":"someid","AgentID":"someagentid","ActivationID":"someactivationid","ProvisioningKey":"someProvisionKey","AgentVersion":"someVersion","Platform":"somePlatform","Version":"1.3"},"Client":{"Hostname":"docker-registry.com","OS":"CentOS Linux 7 (Core)","Architecture":"x86_64","MacAddress":"00:50:56:9f:08:b2","OsVersion":"4.15.14-1.el7.elrepo.x86_64","DockerVersion":"18.03.0-ce"},"Synchronization":{"Sequence":1,"RetryCount":0},"Status":{"Provision":{"Time":"1900-01-00T00:00:00Z","OsStatus":0,"HttpStatus":0,"RetryCount":0},"ConfigDownload":{"HttpStatus":0,"RetryCount":0},"SelfPatchDownload":{"HttpStatus":0,"RetryCount":0},"Setup":{"OsStatus":0,"HttpStatus":0,"RetryCount":1}}}}
+	`
+	compareFrom := `
+	{"Data": {"Synchronization":{"Sequence":1}}}
+	`
+	result := NewRegexComparer().JSONString(compareFrom, temp)
+	if !result {
+		t.Error("JSON Comparer should return true")
+	}
+	compareFrom = `
+	{"Data": {"Synchronization":{"Seqence":1}}}
+	`
+	result = NewRegexComparer().JSONString(compareFrom, temp)
 	if result {
 		t.Error("JSON Comparer should return false")
 	}
