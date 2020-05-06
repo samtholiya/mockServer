@@ -25,3 +25,15 @@ func GetUniqueString(n int) string {
 	s := fmt.Sprintf("%X", b)
 	return s
 }
+
+//CreateFolder creates folder if it does not exists
+func CreateFolder(folderName string) {
+	_, err := os.Stat(folderName)
+
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll(folderName, 0755)
+		if errDir != nil {
+			log.Fatal(err)
+		}
+	}
+}

@@ -2,10 +2,10 @@ package proxy
 
 import (
 	"bytes"
-	"encoding/base64"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/samtholiya/mockServer/common"
@@ -82,15 +82,30 @@ func (p proxyServer) writeToFile() {
 func (p *proxyServer) copyResponse(resp *http.Response, respData []byte) model.Response {
 	res := model.Response{}
 	res.Header = resp.Header
-	if strings.Contains(resp.Header.Get("Content-Type"), "json") {
+	if len(respData) == 0 {
+		res.Payload.Type = "text"
+		res.Payload.Data = ""
+		p.log.Trace("Empty response Data")
+	} else if strings.Contains(resp.Header.Get("Content-Type"), "json") {
 		res.Payload.Type = "json"
 		res.Payload.Data = string(respData)
 	} else if strings.Contains(resp.Header.Get("Content-Type"), "text") {
 		res.Payload.Type = "text"
 		res.Payload.Data = string(respData)
 	} else {
-		res.Payload.Type = "base64"
-		res.Payload.Data = base64.StdEncoding.EncodeToString([]byte(respData))
+		res.Payload.Type = "file"
+		common.CreateFolder("responseFiles")
+		path := filepath.Join("responseFiles", common.GetUniqueString(5)+".res")
+		f, err := os.Create(path)
+		if err != nil {
+			p.log.Error(err)
+		}
+		defer f.Close()
+		_, err = f.Write(respData)
+		if err != nil {
+			p.log.Error(err)
+		}
+		res.Payload.Data = path
 	}
 	res.StatusCode = resp.StatusCode
 	return res

@@ -37,6 +37,7 @@ func (s *Server) deleteScenario(methodName string, apiNumber, scenarioNumber int
 }
 
 func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
+	log.Debug("Writing response ")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	for key := range scenario.Response.Header {
 		w.Header().Set(key, scenario.Response.Header[key][0])
@@ -52,7 +53,9 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 		w.WriteHeader(scenario.Response.StatusCode)
 		data, err := base64.StdEncoding.DecodeString(scenario.Response.Payload.Data)
 		if err != nil {
+			log.Error(err)
 			http.Error(w, err.Error(), 503)
+			return
 		}
 		_, err = w.Write(data)
 		if err != nil {
@@ -83,8 +86,10 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 		FileSize := strconv.FormatInt(FileStat.Size(), 10) //Get file size as a string
 
 		//Send the headers
-		w.Header().Set("Content-Disposition", "attachment; filename="+file.Name())
-		w.Header().Set("Content-Type", FileContentType)
+		if len(w.Header().Get("Content-Type")) == 0 {
+			w.Header().Set("Content-Disposition", "attachment; filename="+file.Name())
+			w.Header().Set("Content-Type", FileContentType)
+		}
 		w.Header().Set("Content-Length", FileSize)
 		w.WriteHeader(scenario.Response.StatusCode)
 		//Send the file
@@ -107,6 +112,7 @@ func (s *Server) getMatchedScenario(r *http.Request, scenarios []model.Scenario)
 	if err != nil {
 		log.Error(err)
 	}
+	log.Tracef("Headers: %v", r.Header)
 	for i := range scenarios {
 		if !s.compare.MapStringArr(scenarios[i].Request.Header, r.Header) {
 			log.Debugf("%v does not matches due to request headers", i)
