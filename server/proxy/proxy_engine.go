@@ -53,6 +53,7 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 		path := "./request_files/" + common.GetUniqueString(5) + ".req"
 		if err := os.MkdirAll("./request_files", os.ModePerm); err != nil {
 			p.log.Error(err)
+			return
 		}
 		tempFile, err := os.Create(path)
 		if err != nil {
@@ -62,6 +63,7 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 		defer tempFile.Close()
 		if _, err = tempFile.Write(reqBody); err != nil {
 			p.log.Error(err)
+			return
 		}
 		scen.Request.Payload.Data = path
 	}
