@@ -37,6 +37,11 @@ func (s *Server) deleteScenario(methodName string, apiNumber, scenarioNumber int
 }
 
 func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
+
+	if scenario.Response.Delay > 0 {
+		time.Sleep(time.Duration(scenario.Response.Delay) * time.Second)
+	}
+
 	log.Debug("Writing response ")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	for key := range scenario.Response.Header {
@@ -101,9 +106,6 @@ func (s *Server) writeResponse(w http.ResponseWriter, scenario model.Scenario) {
 				log.Error(err)
 			}
 		}
-	}
-	if scenario.Response.Delay > 0 {
-		time.Sleep(time.Duration(scenario.Response.Delay) * time.Second)
 	}
 }
 
