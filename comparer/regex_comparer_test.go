@@ -127,3 +127,24 @@ func TestRandomJson(t *testing.T) {
 		t.Error("JSON Comparer should return false")
 	}
 }
+
+func TestAnyNumber(t *testing.T) {
+	temp := `
+	{"Images":[{"imageUUID":"331bc1b3-ab48-7961-a1b6-6783c0ce4ef1","imageName":"","imageSha":"23265cf7e8f5821431c1b7add8531891db26bdc7bfd497a674244d5bfd37e21a","parentUUID":"331bc1b3-ab48-7961-a1b6-6783c0ce4ef1","parentSha":"","state":null,"event":"pull","eventOccurred":"1599697408998388200","history":[{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop)  CMD [\"--config\" \"nats-server.conf\"]","CreatedSince":"7 hours ago","ID":"sha256:23265cf7e8f5821431c1b7add8531891db26bdc7bfd497a674244d5bfd37e21a","Size":"41kB"},{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop)  ENTRYPOINT [\"C:\\\\nats-server.exe\"]","CreatedSince":"7 hours ago","ID":"<missing>","Size":"41kB"},{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop)  EXPOSE 4222 6222 8222","CreatedSince":"7 hours ago","ID":"<missing>","Size":"41kB"},{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop) COPY file:bef66f144841968228eb6875fdca1fb9c094da90455a3e05090bdd09e690e7ea in C:\\nats-server.conf ","CreatedSince":"7 hours ago","ID":"<missing>","Size":"41.6kB"},{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop) COPY file:0b6475b59bf6bfe6c1030fd41ea501af74fd46ae70fd98c58683b35f8ed498ff in C:\\nats-server.exe ","CreatedSince":"7 hours ago","ID":"<missing>","Size":"10.1MB"},{"Comment":"","CreatedAt":"7 hours","CreatedBy":"cmd /S /C #(nop)  ENV NATS_DOCKERIZED=1","CreatedSince":"7 hours ago","ID":"<missing>","Size":"41kB"},{"Comment":"","CreatedAt":"7 days","CreatedBy":"Apply image 1809-amd64","CreatedSince":"7 days ago","ID":"<missing>","Size":"251MB"}]}],"eventReported":132441710217030000}
+	`
+	compareFrom := `
+	{"Images": [], "eventReported":"ANY_NUMBER"}
+	`
+	result := NewRegexComparer().JSONString(compareFrom, temp)
+	t.Log(result)
+	if !result {
+		t.Error("JSON Comparer should return true")
+	}
+	compareFrom = `
+	{"Data": {"Synchronization":{"Seqence":1}}}
+	`
+	result = NewRegexComparer().JSONString(compareFrom, temp)
+	if result {
+		t.Error("JSON Comparer should return false")
+	}
+}

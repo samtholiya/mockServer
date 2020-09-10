@@ -91,6 +91,9 @@ func (r regexComparer) iterMap(x map[string]interface{}, compareTo map[string]in
 		switch vv := v.(type) {
 		case string:
 			if val, ok := compareTo[k].(string); !ok || !r.String(vv, val) {
+				if _, ok := compareTo[k].(float64); ok && vv == "ANY_NUMBER" {
+					return true
+				}
 				return false
 			}
 		case float64:
