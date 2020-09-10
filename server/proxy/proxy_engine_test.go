@@ -32,7 +32,7 @@ func TestProxyServerForm(t *testing.T) {
 	if !strings.Contains(sBody, "{\\\"Hello\\\":\\\"World\\\"}") {
 		t.Error("Post calls are not sending data")
 	}
-	if err:= os.RemoveAll("./request_files"); err!= nil {
+	if err := os.RemoveAll("./request_files"); err != nil {
 		t.Error(err)
 	}
 }

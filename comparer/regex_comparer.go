@@ -68,11 +68,14 @@ func (r regexComparer) MapStringArr(compareFrom map[string][]string, compareTo m
 func (r regexComparer) JSONString(compareFrom string, compareTo string) bool {
 	from := make(map[string]interface{})
 	to := make(map[string]interface{})
+	temp := strings.ReplaceAll(compareTo, "\x00", "")
+
 	if err := json.Unmarshal([]byte(compareFrom), &from); err != nil {
 		r.log.Errorf("%v occured in compareFrom string", err)
 		return false
 	}
-	if err := json.Unmarshal([]byte(compareTo), &to); err != nil {
+	if err := json.Unmarshal([]byte(temp), &to); err != nil {
+		r.log.Tracef("%v\n--------------\n%v", compareFrom, temp)
 		r.log.Errorf("%v occured in compareTo string", err)
 		return false
 	}

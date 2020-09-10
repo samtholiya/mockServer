@@ -15,6 +15,7 @@ import (
 )
 
 func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, apis []model.API) {
+	log.Tracef("%v headers", r.Header)
 	for i := range apis {
 		if s.compare.String(apis[i].Endpoint, r.URL.EscapedPath()) {
 			log.Debugf("Url %v matched with %v", apis[i].Endpoint, r.URL.EscapedPath())
@@ -24,9 +25,8 @@ func (s *Server) getResponseForRequest(w http.ResponseWriter, r *http.Request, a
 				s.deleteScenario(r.Method, i, scenarioNumber)
 			}
 			return
-		} else {
-			log.Debugf("URL regex %v did not match %v", apis[i].Endpoint, r.URL.EscapedPath())
 		}
+		log.Debugf("URL regex %v did not match %v", apis[i].Endpoint, r.URL.EscapedPath())
 	}
 	log.Warnf("No URL Matched %v", r.URL.EscapedPath())
 	w.WriteHeader(404)

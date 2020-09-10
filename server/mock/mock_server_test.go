@@ -165,3 +165,94 @@ func TestServerHTTPPost(t *testing.T) {
 		t.Error(string(body))
 	}
 }
+
+func TestDeleteScenario(t *testing.T) {
+	app := model.App{
+		API: map[string][]model.API{
+			"POST": []model.API{model.API{
+				Endpoint:    "/post",
+				Description: "Here is the description",
+				Scenarios: []model.Scenario{
+					model.Scenario{
+						Request: model.Request{
+							Header: map[string][]string{},
+							Query:  map[string][]string{},
+							Payload: model.Payload{
+								Type: "",
+								Data: ``,
+							},
+						},
+						Response: model.Response{
+							Payload: model.Payload{
+								Type: "text",
+								Data: "Hello World",
+							},
+							StatusCode: 201,
+						},
+						Delete: true,
+					},
+
+					model.Scenario{
+						Request: model.Request{
+							Header: map[string][]string{},
+							Query:  map[string][]string{},
+							Payload: model.Payload{
+								Type: "",
+								Data: ``,
+							},
+						},
+						Response: model.Response{
+							Payload: model.Payload{
+								Type: "text",
+								Data: "Hello World",
+							},
+							StatusCode: 201,
+						},
+						Delete: true,
+					},
+					model.Scenario{
+						Request: model.Request{
+							Header: map[string][]string{},
+							Query:  map[string][]string{},
+							Payload: model.Payload{
+								Type: "",
+								Data: ``,
+							},
+						},
+						Response: model.Response{
+							Payload: model.Payload{
+								Type: "text",
+								Data: "Hello World",
+							},
+							StatusCode: 201,
+						},
+						Delete: true,
+					},
+				},
+			},
+			},
+		},
+	}
+	req := httptest.NewRequest("POST", "/post", bytes.NewReader([]byte(``)))
+	w := httptest.NewRecorder()
+
+	s := Server{}
+	s.SetWatcher(types.TestWatcher{})
+	s.SetComparer(comparer.NewRegexComparer())
+	s.SetApp(app)
+	t.Log(s.app)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	s.ServeHTTP(w, req)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	t.Log(s.app)
+	t.Log(s.app)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	s.ServeHTTP(w, req)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	t.Log(s.app)
+	t.Log(s.app)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	s.ServeHTTP(w, req)
+	t.Log(len(s.app.API["POST"][0].Scenarios))
+	t.Log(s.app)
+}
