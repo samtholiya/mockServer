@@ -43,11 +43,11 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 			break
 		}
 	}
+
 	if r.Header.Get("Content-Type") == "application/json" {
 		scen.Request.Payload.Type = "json"
 		scen.Request.Payload.Data = string(reqBody)
-	}
-	if strings.Contains(r.Header.Get("Content-Type"), "form") {
+	} else {
 		p.log.Debug("Found Form encoded url")
 		scen.Request.Payload.Type = "file"
 		path := "./request_files/" + common.GetUniqueString(5) + ".req"
@@ -65,6 +65,7 @@ func (p *proxyServer) copyScenario(r *http.Request, reqBody []byte, resp *http.R
 		}
 		scen.Request.Payload.Data = path
 	}
+
 	scen.Response = p.copyResponse(resp, respData)
 	temp.Scenarios = append(temp.Scenarios, scen)
 	if flag {
