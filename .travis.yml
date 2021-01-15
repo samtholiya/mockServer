@@ -27,3 +27,12 @@ jobs:
       after_script:
         - ./cc-test-reporter -d after-build -p go-open-registry --exit-code $TRAVIS_TEST_RESULT
         - bash <(curl -s https://codecov.io/bash)
+    - name: Dockerhub deploy
+      if: tag IS present
+      stage: deploy
+      script:
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - docker build . -t samtholiya/analyser-service:$(git describe --tags)
+        - docker build . -t samtholiya/analyser-service:latest
+        - docker push samtholiya/analyser-service:$(git describe --tags)
+        - docker push samtholiya/analyser-service:latest
