@@ -1,4 +1,4 @@
-# Mock Server [![Build Status](https://travis-ci.com/samtholiya/mockServer.svg?branch=master)](https://travis-ci.com/samtholiya/mockServer) [![codecov](https://codecov.io/gh/samtholiya/mockServer/branch/master/graph/badge.svg)](https://codecov.io/gh/samtholiya/mockServer)
+# Mock Server [![Build Status](https://travis-ci.com/samtholiya/mockServer.svg?branch=master)](https://travis-ci.com/samtholiya/mockServer) [![codecov](https://codecov.io/gh/samtholiya/mockServer/branch/master/graph/badge.svg)](https://codecov.io/gh/samtholiya/mockServer) [![goreport](https://goreportcard.com/badge/github.com/samtholiya/mockServer)](https://goreportcard.com/report/github.com/samtholiya/mockServer) 
 
 Mock Server can be used by people who want to test their client by mocking the backend responses instead of changing the backend
 The only thing you need to do is configure the config.yaml and you are ready to run the server which gives responses as per requirement.
